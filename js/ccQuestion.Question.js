@@ -13,9 +13,7 @@
         question.validate = function(){ValidationService.validate(question)};
         question.setAnswer = function(value){
             if(value instanceof Date){
-                //TODO: compensate for timezoneoffset before substringing.
-                //if value was created right after midnight and timezoneoffset is negative,
-                //the day will be behind by 1 day
+                value.setTime(value.getTime() + getTimezoneOffsetCompensation(value));
                 question.answer = value.toISOString().substr(0,10);
             } else {
                 question.answer = value;
@@ -23,5 +21,9 @@
         };
 
         question.answer = question.options.getDefaultAnswer();
+    }
+
+    function getTimezoneOffsetCompensation(date){
+        return (Math.abs(date.getTimezoneOffset())/60)*60*60*1000;
     }
 })();
